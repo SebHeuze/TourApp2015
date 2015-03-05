@@ -106,16 +106,26 @@ public class TakeMeATourService {
 				TakeMeATourResponse response = null;
 				
 				try {
-					urlString = TakeMeATourService.this.getServiceUrl();
-					
-					Log.d(LOG_TAG, "Loading take me a tour info from '" + urlString + "'.");
-					
-					if (urlString != null) {
-						URL url = new URL(urlString);
-						InputStream stream = url.openStream();
-						
-						response = serializer.read(TakeMeATourResponse.class, stream);
-					}
+
+                    boolean localServices = TakeMeATourService.this.getContext().getResources().getBoolean(R.bool.useLocalFiles);
+                    if(localServices){
+                        String fileName = TakeMeATourService.this.getContext().getString(R.string.localTakeMeATourService);
+                        InputStream stream = TakeMeATourService.this.getContext().getAssets().open(fileName);
+                        response = serializer.read(TakeMeATourResponse.class, stream);
+                    } else {
+                        urlString = TakeMeATourService.this.getServiceUrl();
+
+                        Log.d(LOG_TAG, "Loading take me a tour info from '" + urlString + "'.");
+
+                        if (urlString != null) {
+                            URL url = new URL(urlString);
+                            InputStream stream = url.openStream();
+
+                            response = serializer.read(TakeMeATourResponse.class, stream);
+                        }
+                    }
+
+
 					
 					// Runs the onCompleted event of the listener
 					if (TakeMeATourService.this.getListener() != null) {

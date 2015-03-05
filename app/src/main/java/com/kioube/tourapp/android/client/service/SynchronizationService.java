@@ -197,8 +197,8 @@ public class SynchronizationService {
 		
 		// TODO [2014-03-18, JMEL] For developement purposes, remove this when services are developed
 		boolean fakeServices = this.getContext().getResources().getBoolean(R.bool.useFakeServices);
-		
-		if (fakeServices) {
+
+        if (fakeServices) {
 			Log.d(LOG_TAG, "Using fake synchronization services because of lazy server side developer.");
 			
 			result = this.getContext().getString(R.string.fakeFirstSyncService);
@@ -267,17 +267,24 @@ public class SynchronizationService {
 				SynchronizationResponse response = null;
 				
 				try {
-					urlString = SynchronizationService.this.getServiceUrl();
-					
-					Log.d(LOG_TAG, "Synchronizing from '" + urlString + "'.");
-					
-					if (urlString != null) {
-						URL url = new URL(urlString);
-						InputStream stream = url.openStream();
-						
-						response = serializer.read(SynchronizationResponse.class, stream);
-					}
-					
+
+                    boolean localServices = SynchronizationService.this.getContext().getResources().getBoolean(R.bool.useLocalFiles);
+                    if(localServices){
+                        String fileName = SynchronizationService.this.getContext().getString(R.string.localFirstSyncService);
+                        InputStream stream = SynchronizationService.this.getContext().getAssets().open(fileName);
+                        response = serializer.read(SynchronizationResponse.class, stream);
+                    } else {
+                        urlString = SynchronizationService.this.getServiceUrl();
+
+                        Log.d(LOG_TAG, "Synchronizing from '" + urlString + "'.");
+
+                        if (urlString != null) {
+                            URL url = new URL(urlString);
+                            InputStream stream = url.openStream();
+                            response = serializer.read(SynchronizationResponse.class, stream);
+                        }
+                    }
+
 					// Save data
 					if (response != null) {
 						

@@ -106,16 +106,25 @@ public class MessageService {
 				MessageResponse response = null;
 				
 				try {
-					urlString = MessageService.this.getServiceUrl();
-					
-					Log.d(LOG_TAG, "Loading messages from '" + urlString + "'.");
-					
-					if (urlString != null) {
-						URL url = new URL(urlString);
-						InputStream stream = url.openStream();
-						
-						response = serializer.read(MessageResponse.class, stream);
-					}
+
+                    boolean localServices = MessageService.this.getContext().getResources().getBoolean(R.bool.useLocalFiles);
+                    if(localServices){
+                        String fileName = MessageService.this.getContext().getString(R.string.localMessageService);
+                        InputStream stream = MessageService.this.getContext().getAssets().open(fileName);
+                        response = serializer.read(MessageResponse.class, stream);
+                    } else {
+                        urlString = MessageService.this.getServiceUrl();
+
+                        Log.d(LOG_TAG, "Loading messages from '" + urlString + "'.");
+
+                        if (urlString != null) {
+                            URL url = new URL(urlString);
+                            InputStream stream = url.openStream();
+
+                            response = serializer.read(MessageResponse.class, stream);
+                        }
+                    }
+
 					
 					// Runs the onCompleted event of the listener
 					if (MessageService.this.getListener() != null) {
