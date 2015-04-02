@@ -54,7 +54,7 @@
 
         <meta-data
             android:name="com.google.android.maps.v2.API_KEY"
-            android:value="AIzaSyALTZ6wGXm7hAZJLpFcSmEetSW1JmKfpik" />
+            android:value="AIzaSyBVly-3xEpUBRh_w4h12pUV-VJCbIYiZO4" />
 
         <!-- Splash screen -->
         <activity
