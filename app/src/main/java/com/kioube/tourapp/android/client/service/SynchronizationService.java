@@ -1,10 +1,15 @@
 package com.kioube.tourapp.android.client.service;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
 
@@ -172,7 +177,7 @@ public class SynchronizationService {
 	 * Constructs a new SynchronizationService object.
 	 * 
 	 * @param context
-	 * @param loadingMessage
+	 * @param listener
 	 */
 	public SynchronizationService(Context context, ServiceListener listener) {
 		super();
@@ -265,24 +270,45 @@ public class SynchronizationService {
 				Serializer serializer = new Persister(new AnnotationStrategy());
 				
 				SynchronizationResponse response = null;
-				
+                Date updatedDateRemote = null;
+
 				try {
 
                     boolean localServices = SynchronizationService.this.getContext().getResources().getBoolean(R.bool.useLocalFiles);
                     if(localServices){
-                        String fileName = SynchronizationService.this.getContext().getString(R.string.localFirstSyncService);
-                        InputStream stream = SynchronizationService.this.getContext().getAssets().open(fileName);
-                        response = serializer.read(SynchronizationResponse.class, stream);
-                    } else {
                         urlString = SynchronizationService.this.getServiceUrl();
 
                         Log.d(LOG_TAG, "Synchronizing from '" + urlString + "'.");
-
+                        InputStream stream = null;
                         if (urlString != null) {
                             URL url = new URL(urlString);
-                            InputStream stream = url.openStream();
-                            response = serializer.read(SynchronizationResponse.class, stream);
+                            long date = url.openConnection().getHeaderFieldDate("Last-Modified", 0);
+                            updatedDateRemote = new Date(date);
+
+                            stream = url.openStream();
+
                         }
+
+                        String fileName = SynchronizationService.this.getContext().getString(R.string.localFirstSyncService);
+
+                        File localFile = new File(getContext().getFilesDir(), fileName);
+                        Log.d(LOG_TAG, "local file : '" + localFile.getAbsolutePath() + "'.");
+
+                        if(!localFile.exists() || (localFile.exists() && (new Date(localFile.lastModified())).before(updatedDateRemote))){
+                            File outputLocalFile = new File(getContext().getFilesDir(), fileName);
+                            Log.d(LOG_TAG, "Updating file '" + outputLocalFile.getAbsolutePath() + "'.");
+                            OutputStream outputStream = new FileOutputStream(outputLocalFile);
+                            int read = 0;
+                            byte[] bytes = new byte[1024];
+
+                            while ((read = stream.read(bytes)) != -1) {
+                                outputStream.write(bytes, 0, read);
+                            }
+                        }
+
+                        stream = new FileInputStream(new File(getContext().getFilesDir(), fileName));
+                        response = serializer.read(SynchronizationResponse.class, stream);
+
                     }
 
 					// Save data
@@ -371,7 +397,7 @@ public class SynchronizationService {
 	/**
 	 * Persists the imported TourItem list by managing creation, update and deletion
 	 * 
-	 * @param TourItemList A list of persistent items to save
+	 * @param tourItemList A list of persistent items to save
 	 */
 	private void persistTourItemList(List<TourItem> tourItemList) {
 		
@@ -439,7 +465,7 @@ public class SynchronizationService {
 	/**
 	 * Persists the imported Coordinate list by managing creation, update and deletion
 	 * 
-	 * @param coordinateAreaList A list of persistent items to save
+	 * @param coordinateList A list of persistent items to save
 	 */
 	private void persistCoordinateList(List<Coordinate> coordinateList) {
 		if (coordinateList != null) {
