@@ -1,7 +1,9 @@
 package com.kioube.tourapp.android.client.service.response;
 
+import java.util.Date;
 import java.util.List;
 
+import org.simpleframework.xml.Element;
 import org.simpleframework.xml.ElementList;
 import org.simpleframework.xml.Root;
 
@@ -37,7 +39,10 @@ public class SynchronizationResponse {
 	
 	@ElementList(name = "ConfigurationList", type = Configuration.class, required = false)
 	private List<Configuration> configurationList;
-	
+
+    @ElementList(name = "UpdateDate", type = Date.class, required = false)
+    private List<Configuration> updateDate;
+
 	/* --- Accessors --- */
 	
 	/**
