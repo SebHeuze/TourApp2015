@@ -2,21 +2,21 @@
 <resources>
     
     <!-- Real services base URL -->
-    <string name="serviceRoot">http://my-traveler.herokuapp.com/webservice/</string>
+    <string name="serviceRoot" translatable="false">http://my-traveler.herokuapp.com/webservice/</string>
     
     <!-- Set to false if Damien completes the server side -->
     <bool name="useFakeServices">true</bool>
     <bool name="useLocalFiles">true</bool>
 
-    <string name="localFirstSyncService">sample_sync.xml</string>
-    <string name="localMessageService">sample_messages.xml</string>
-    <string name="localTakeMeATourService">sample_tmt.xml</string>
+    <string name="localFirstSyncService" translatable="false">sample_sync.xml</string>
+    <string name="localMessageService" translatable="false">sample_messages.xml</string>
+    <string name="localTakeMeATourService" translatable="false">sample_tmt.xml</string>
 
     <!-- Fake services URL -->
-    <string name="fakeFirstSyncService">http://projects.hodor.ninja/tourapp/sample_sync.xml</string>
+    <string name="fakeFirstSyncService" translatable="false">http://projects.hodor.ninja/tourapp/sample_sync.xml</string>
     <!-- <string name="fakeUpdateSyncService">http://labs.kioube.com/api/sample_sync_update.xml</string>
     <string name="fakeDeleteSyncService">http://labs.kioube.com/api/sample_sync_delete.xml</string>-->
-    <string name="fakeMessageService">http://projects.hodor.ninja/tourapp/sample_messages.xml</string>
-    <string name="fakeTakeMeATourService">http://projects.hodor.ninja/tourapp/sample_tmt.xml</string>
+    <string name="fakeMessageService" translatable="false">http://projects.hodor.ninja/tourapp/sample_messages.xml</string>
+    <string name="fakeTakeMeATourService" translatable="false">http://projects.hodor.ninja/tourapp/sample_tmt.xml</string>
     
 </resources>
